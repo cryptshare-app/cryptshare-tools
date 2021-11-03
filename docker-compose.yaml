@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  share-db:
+    container_name: share-db
+    image: postgres:10
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: share
+      POSTGRES_USER: share
+      POSTGRES_DB: share
+  share-api:
+    container_name: share-api
+    build: ./share-domain
+    volumes:
+      - ./share-staging:/opt/payara5/staging
+      - ./share-logs:/opt/payara5/glassfish/domains/share/logs
+    ports:
+      - 7048:7048
+      - 7080:7080
+      - 7081:7081
+      - 7009:9009
+    depends_on:
+      - share-db
+  cryptshare-test-db:
+    container_name: cryptshare-test-db
+    image: postgres:10
+    restart: always
+    ports:
+      - 15432:5432
+    environment:
+      POSTGRES_PASSWORD: cryptshare
+      POSTGRES_USER: cryptshare
+      POSTGRES_DB: cryptshare-test-db
